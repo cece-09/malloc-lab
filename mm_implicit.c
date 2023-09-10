@@ -47,14 +47,6 @@ team_t team = {
 #define NEXT_BLKP(bp) ((char *)(bp) + GET_SIZE(((char *)(bp)-WSIZE)))
 #define PREV_BLKP(bp) ((char *)(bp)-GET_SIZE(((char *)(bp)-DSIZE)))
 
-// macros for explicit block list
-#define GET_PRED(bp) GET(bp)            // bp로부터 4바이트 읽기
-#define GET_SUCC(bp) GET((bp + WSIZE))  // pred부터 4바이트 읽기
-
-// doubly linked list head & tail
-static void *head;
-static void *tail;
-
 // heap_listp
 static void *heap_listp;
 static void *last_alloc;  // 마지막으로 할당된 bp
@@ -64,14 +56,13 @@ static void *extend_heap(size_t);
 static void *coalesce(void *);
 static void coalesce_all();
 static void place(void *, size_t);
-
 static void *find_fit(size_t);
+
 static void *first_fit(size_t);
 static void *next_fit(size_t);
 
 // * Initialization
 int mm_init(void) {
-  void *bp;
   heap_listp = mem_sbrk(4 * WSIZE);  // 4*4byte
   if (heap_listp == (void *)-1) return -1;
 
@@ -84,14 +75,9 @@ int mm_init(void) {
   heap_listp += DSIZE;
   last_alloc = heap_listp;
 
-  if (bp = extend_heap(CHUNKSIZE / WSIZE) == NULL) {
+  if (extend_heap(CHUNKSIZE / WSIZE) == NULL) {
     return -1;  // heap을 extend
   }
-  // head & tail 초기화
-  head = bp;
-  tail;
-
-  // PUT(GET_PRED(bp),
   return 0;
 }
 
